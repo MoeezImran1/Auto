@@ -5,3 +5,5 @@ pydantic
 cryptography
 jinja2
 email-validator
+
+pymysql
