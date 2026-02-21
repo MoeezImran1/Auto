@@ -1,9 +1,14 @@
+import sys
+import os
+
+# Ensure Vercel can find modules in the same backend folder
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-import os
 
 from database import engine, Base, get_db
 import models
