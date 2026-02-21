@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (scheme === 'minimal') {
             verifyTemplateText.value = `<div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
   <h2>Verify your email</h2>
-  <p>Please click the button below to verify your email address.</p>
+  <p>Please click the button below to verify your email address, or use this verification code: <strong>{{code}}</strong></p>
   <a href="{{verification_link}}" style="display: inline-block; padding: 10px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 5px;">Verify Email</a>
 </div>`;
             resetTemplateText.value = `<div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
@@ -268,7 +268,11 @@ document.addEventListener('DOMContentLoaded', () => {
     <span style="font-size: 24px;">📧</span>
   </div>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 15px;">You're almost there!</h1>
-  <p style="color: #6B7280; font-size: 16px; margin-bottom: 30px; line-height: 1.5;">Tap the button below to confirm your email address and activate your account.</p>
+  <p style="color: #6B7280; font-size: 16px; margin-bottom: 20px; line-height: 1.5;">Tap the button below to confirm your email address and activate your account.</p>
+  <div style="margin-bottom: 30px;">
+      <p style="font-size: 14px; color: #9CA3AF; margin-bottom: 8px;">Or enter this verification code:</p>
+      <div style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #111827;">{{code}}</div>
+  </div>
   <a href="{{verification_link}}" style="background-color: #2563EB; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block;">Verify Email Address</a>
 </div>`;
             resetTemplateText.value = `<div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
@@ -285,6 +289,10 @@ document.addEventListener('DOMContentLoaded', () => {
   <div style="padding: 40px 30px;">
     <h2 style="color: #333; margin-top: 0;">Welcome aboard!</h2>
     <p style="color: #555; font-size: 16px; line-height: 1.6;">Let's get your email address verified so you can start using our service.</p>
+    <div style="background-color: #f4f5f7; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
+        <p style="font-size: 14px; color: #6b778c; margin: 0 0 10px 0;">Your Verification Code</p>
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #172b4d;">{{code}}</span>
+    </div>
     <div style="text-align: center; margin: 30px 0;">
       <a href="{{verification_link}}" style="background-color: #0052CC; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Verify My Email</a>
     </div>
@@ -360,8 +368,11 @@ document.addEventListener('DOMContentLoaded', () => {
             endpoint = '/send-reset';
             payload = `{\n  "domain": "${domain}",\n  "email": "user@example.com"\n}`;
         } else if (action === 'verify-token') {
-            endpoint = '/verify-token?email=user@example.com&token=RAW_TOKEN&type=verify';
+            endpoint = '/verify-token?email=user@example.com&token=RAW_TOKEN_OR_OTP&type=verify';
             payload = null;
+        } else if (action === 'verify-code') {
+            endpoint = '/verify-code';
+            payload = `{\n  "email": "user@example.com",\n  "code": "123456",\n  "type": "verify"\n}`;
         }
 
         const url = `${API_URL}${endpoint}`;

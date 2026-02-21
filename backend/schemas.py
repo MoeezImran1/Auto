@@ -42,6 +42,11 @@ class SendResetRequest(BaseModel):
     domain: str
     email: EmailStr
 
+class VerifyCodeRequest(BaseModel):
+    email: EmailStr
+    code: str
+    type: str = "verify"
+
 class EmailLogResponse(BaseModel):
     id: int
     email: str

@@ -125,9 +125,13 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
     if not setting:
         raise HTTPException(status_code=404, detail="Domain not connected.")
 
-    # Generate token
+    # Generate token (we now generate both a link and a 6-digit OTP to support all use-cases)
     raw_token = security.generate_secure_token()
-    hashed_token = security.hash_token(raw_token)
+    otp_code = security.generate_otp()
+    
+    # By default, store the OTP code in history so `/verify-code` works, but also `/verify-token` works since we are generating OTP.
+    # Actually, we will store the OTP securely as the token. If they use the link, we can embed the OTP in the link!
+    hashed_token = security.hash_token(otp_code)
     expiry = datetime.utcnow() + timedelta(hours=1)
 
     db_token = models.EmailToken(
@@ -142,10 +146,10 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
     # Link logic
     base_url = "https://" + setting.domain
     # Fallback to local if not production testing
-    link = f"{base_url}/verify-email?token={raw_token}&email={req.email}"
+    link = f"{base_url}/verify-email?token={otp_code}&email={req.email}"
     logo = setting.logo_url if setting.logo_url else ""
 
-    body = email_service.render_template(setting.verification_template, verification_link=link, logo=logo)
+    body = email_service.render_template(setting.verification_template, verification_link=link, logo=logo, code=otp_code)
     
     pwd = security.decrypt_password(setting.password_encrypted)
     
@@ -233,6 +237,28 @@ def verify_token(email: str, token: str, type: str, db: Session = Depends(get_db
     db.commit()
 
     return {"message": "Token verified successfully"}
+
+@app.post("/verify-code")
+def verify_code(req: schemas.VerifyCodeRequest, db: Session = Depends(get_db)):
+    hashed_token = security.hash_token(req.code)
+    db_token = db.query(models.EmailToken).filter(
+        models.EmailToken.email == req.email,
+        models.EmailToken.token == hashed_token,
+        models.EmailToken.token_type == req.type,
+        models.EmailToken.used == False
+    ).first()
+
+    if not db_token:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification code")
+
+    if datetime.utcnow() > db_token.expiry_time:
+        raise HTTPException(status_code=400, detail="Verification code expired")
+
+    # Mark as used
+    db_token.used = True
+    db.commit()
+
+    return {"message": "Code verified successfully"}
 
 @app.post("/cleanup-tokens")
 def cleanup_tokens(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):

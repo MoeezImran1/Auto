@@ -24,6 +24,10 @@ def generate_secure_token() -> str:
     """Generate a random 32-character secure URL-safe token."""
     return secrets.token_urlsafe(32)
 
+def generate_otp() -> str:
+    """Generate a random 6-digit OTP code."""
+    return str(secrets.randbelow(900000) + 100000)
+
 def hash_token(token: str) -> str:
     """Hashes the token for secure storage."""
     return hashlib.sha256(token.encode()).hexdigest()
