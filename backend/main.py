@@ -171,7 +171,7 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
 def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     setting = db.query(models.EmailSettings).filter(models.EmailSettings.domain == req.domain).first()
     if not setting:
-        raise HTTPException(status_code=404, detail="Domain not connected.")
+        raise HTTPException(status_code=404, detail=f"Domain '{req.domain}' not connected. Please setup SMTP for this domain first in MailBridge.")
 
     # Generate token
     raw_token = security.generate_secure_token()
