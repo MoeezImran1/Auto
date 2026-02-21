@@ -258,8 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>`;
             resetTemplateText.value = `<div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
   <h2>Reset Password</h2>
-  <p>Click below to reset your password. Link expires in 1 hour.</p>
-  <a href="{{reset_link}}" style="display: inline-block; padding: 10px 20px; background: #000; color: #fff; text-decoration: none; border-radius: 5px;">Reset Password</a>
+  <p>Please use this OTP code to reset your password. Code expires in 1 hour:</p>
+  <h3><strong>{{code}}</strong></h3>
 </div>`;
         } else if (scheme === 'saas') {
             verifyTemplateText.value = `<div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
@@ -274,8 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>`;
             resetTemplateText.value = `<div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 15px;">Reset your password</h1>
-  <p style="color: #6B7280; font-size: 16px; margin-bottom: 30px; line-height: 1.5;">We received a request to reset your password. Click the button below to choose a new one.</p>
-  <a href="{{reset_link}}" style="background-color: #2563EB; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block;">Reset Password</a>
+  <p style="color: #6B7280; font-size: 16px; margin-bottom: 30px; line-height: 1.5;">We received a request to reset your password. Enter the OTP code below to choose a new one.</p>
+  <div style="margin-bottom: 30px;">
+      <div style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #111827;">{{code}}</div>
+  </div>
   <p style="color: #9CA3AF; font-size: 14px; margin-top: 30px;">If you didn't request this, you can safely ignore this email.</p>
 </div>`;
         } else if (scheme === 'brand') {
@@ -298,9 +300,10 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
   <div style="padding: 40px 30px;">
     <h2 style="color: #333; margin-top: 0;">Password Reset</h2>
-    <p style="color: #555; font-size: 16px; line-height: 1.6;">Use the secure link below to reset your password. This link will expire shortly.</p>
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="{{reset_link}}" style="background-color: #0052CC; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Reset Password</a>
+    <p style="color: #555; font-size: 16px; line-height: 1.6;">Use the OTP code below to reset your password. This code will expire shortly.</p>
+    <div style="background-color: #f4f5f7; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
+        <p style="font-size: 14px; color: #6b778c; margin: 0 0 10px 0;">Your Reset Code</p>
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #172b4d;">{{code}}</span>
     </div>
   </div>
 </div>`;

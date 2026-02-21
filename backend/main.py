@@ -173,9 +173,9 @@ def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks
     if not setting:
         raise HTTPException(status_code=404, detail=f"Domain '{req.domain}' not connected. Please setup SMTP for this domain first in MailBridge.")
 
-    # Generate token
-    raw_token = security.generate_secure_token()
-    hashed_token = security.hash_token(raw_token)
+    # Generate only a 6-digit OTP code for reset
+    otp_code = security.generate_otp()
+    hashed_token = security.hash_token(otp_code)
     expiry = datetime.utcnow() + timedelta(hours=1)
 
     db_token = models.EmailToken(
@@ -187,12 +187,10 @@ def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks
     db.add(db_token)
     db.commit()
 
-    # Link logic
-    base_url = "https://" + setting.domain
-    link = f"{base_url}/reset-password?token={raw_token}&email={req.email}"
     logo = setting.logo_url if setting.logo_url else ""
 
-    body = email_service.render_template(setting.reset_template, reset_link=link, logo=logo)
+    # Provide the OTP code to the template instead of a link
+    body = email_service.render_template(setting.reset_template, reset_link="#", logo=logo, code=otp_code)
     pwd = security.decrypt_password(setting.password_encrypted)
     
     success = email_service.send_email(
@@ -202,15 +200,15 @@ def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks
         password=pwd,
         sender_name=setting.sender_name,
         to_email=req.email,
-        subject="Reset Your Password",
+        subject="Reset Your Password (OTP code)",
         html_body=body.replace('\n', '<br>')
     )
-    log_email_action(db, req.email, "Reset Password", "Success" if success else "Failed")
+    log_email_action(db, req.email, "Reset OTP", "Success" if success else "Failed")
 
     if not success:
         raise HTTPException(status_code=500, detail="Failed to send reset email.")
 
-    return {"message": "Reset email sent successfully"}
+    return {"message": "Reset OTP sent successfully"}
 
 @app.get("/verify-token")
 def verify_token(email: str, token: str, type: str, db: Session = Depends(get_db)):
