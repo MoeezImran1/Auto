@@ -123,7 +123,7 @@ def test_email(req: schemas.TestEmailRequest, background_tasks: BackgroundTasks,
 def send_verification(req: schemas.SendVerificationRequest, request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     setting = db.query(models.EmailSettings).filter(models.EmailSettings.domain == req.domain).first()
     if not setting:
-        raise HTTPException(status_code=404, detail="Domain not connected.")
+        raise HTTPException(status_code=404, detail=f"Domain '{req.domain}' not connected. Please setup SMTP for this domain first in MailBridge.")
 
     # Generate only a 6-digit OTP code
     otp_code = security.generate_otp()
