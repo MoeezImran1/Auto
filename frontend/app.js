@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:8000'; // Default dev backend URL
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : ''; // Vercel API is hosted alongside UI on the exact same domain
 
 document.addEventListener('DOMContentLoaded', () => {
     // Navigation
