@@ -149,22 +149,22 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
     
     pwd = security.decrypt_password(setting.password_encrypted)
     
-    def send_wrapper():
-        db_session = next(get_db())
-        success = email_service.send_email(
-            host=setting.smtp_host,
-            port=setting.smtp_port,
-            username=setting.email,
-            password=pwd,
-            sender_name=setting.sender_name,
-            to_email=req.email,
-            subject="Verify Your Email",
-            html_body=body.replace('\n', '<br>')
-        )
-        log_email_action(db_session, req.email, "Verification", "Success" if success else "Failed")
+    success = email_service.send_email(
+        host=setting.smtp_host,
+        port=setting.smtp_port,
+        username=setting.email,
+        password=pwd,
+        sender_name=setting.sender_name,
+        to_email=req.email,
+        subject="Verify Your Email",
+        html_body=body.replace('\n', '<br>')
+    )
+    log_email_action(db, req.email, "Verification", "Success" if success else "Failed")
 
-    background_tasks.add_task(send_wrapper)
-    return {"message": "Verification email queued"}
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to send verification email.")
+
+    return {"message": "Verification email sent successfully"}
 
 
 @app.post("/send-reset")
@@ -195,22 +195,22 @@ def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks
     body = email_service.render_template(setting.reset_template, reset_link=link, logo=logo)
     pwd = security.decrypt_password(setting.password_encrypted)
     
-    def send_wrapper():
-        db_session = next(get_db())
-        success = email_service.send_email(
-            host=setting.smtp_host,
-            port=setting.smtp_port,
-            username=setting.email,
-            password=pwd,
-            sender_name=setting.sender_name,
-            to_email=req.email,
-            subject="Reset Your Password",
-            html_body=body.replace('\n', '<br>')
-        )
-        log_email_action(db_session, req.email, "Reset Password", "Success" if success else "Failed")
+    success = email_service.send_email(
+        host=setting.smtp_host,
+        port=setting.smtp_port,
+        username=setting.email,
+        password=pwd,
+        sender_name=setting.sender_name,
+        to_email=req.email,
+        subject="Reset Your Password",
+        html_body=body.replace('\n', '<br>')
+    )
+    log_email_action(db, req.email, "Reset Password", "Success" if success else "Failed")
 
-    background_tasks.add_task(send_wrapper)
-    return {"message": "Reset email queued"}
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to send reset email.")
+
+    return {"message": "Reset email sent successfully"}
 
 @app.get("/verify-token")
 def verify_token(email: str, token: str, type: str, db: Session = Depends(get_db)):
