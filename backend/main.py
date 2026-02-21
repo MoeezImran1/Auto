@@ -125,12 +125,10 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
     if not setting:
         raise HTTPException(status_code=404, detail="Domain not connected.")
 
-    # Generate token (we now generate both a link and a 6-digit OTP to support all use-cases)
-    raw_token = security.generate_secure_token()
+    # Generate only a 6-digit OTP code
     otp_code = security.generate_otp()
     
-    # By default, store the OTP code in history so `/verify-code` works, but also `/verify-token` works since we are generating OTP.
-    # Actually, we will store the OTP securely as the token. If they use the link, we can embed the OTP in the link!
+    # Securely hash the OTP code to store as the token
     hashed_token = security.hash_token(otp_code)
     expiry = datetime.utcnow() + timedelta(hours=1)
 
@@ -143,13 +141,11 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
     db.add(db_token)
     db.commit()
 
-    # Link logic
-    base_url = "https://" + setting.domain
-    # Fallback to local if not production testing
-    link = f"{base_url}/verify-email?token={otp_code}&email={req.email}"
     logo = setting.logo_url if setting.logo_url else ""
 
-    body = email_service.render_template(setting.verification_template, verification_link=link, logo=logo, code=otp_code)
+    # Since we only want to send OTP, we just replace {{code}} in the template and clear any {{verification_link}}
+    # by just setting it to '#' or an empty string so they do not click it.
+    body = email_service.render_template(setting.verification_template, verification_link="#", logo=logo, code=otp_code)
     
     pwd = security.decrypt_password(setting.password_encrypted)
     
@@ -160,15 +156,15 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
         password=pwd,
         sender_name=setting.sender_name,
         to_email=req.email,
-        subject="Verify Your Email",
+        subject="Verify Your Email (OTP code)",
         html_body=body.replace('\n', '<br>')
     )
-    log_email_action(db, req.email, "Verification", "Success" if success else "Failed")
+    log_email_action(db, req.email, "Verification OTP", "Success" if success else "Failed")
 
     if not success:
         raise HTTPException(status_code=500, detail="Failed to send verification email.")
 
-    return {"message": "Verification email sent successfully"}
+    return {"message": "Verification OTP sent successfully"}
 
 
 @app.post("/send-reset")
