@@ -24,6 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSendTestEmail = document.getElementById('btnSendTestEmail');
     let currentTestDomain = '';
 
+    // Load Local Storage to persist setup forms natively
+    const savedCredsStr = localStorage.getItem('mailbridge_creds');
+    if (savedCredsStr) {
+        try {
+            const saved = JSON.parse(savedCredsStr);
+            document.getElementById('domainName').value = saved.domain || '';
+            document.getElementById('senderName').value = saved.sender_name || '';
+            document.getElementById('emailAddress').value = saved.email || '';
+            document.getElementById('smtpHost').value = saved.smtp_host || '';
+            document.getElementById('smtpPort').value = saved.smtp_port || '';
+            document.getElementById('smtpPassword').value = saved.password || '';
+            document.getElementById('logoUrl').value = saved.logo_url || '';
+        } catch (e) { }
+    }
+
     // Navigation Logic
     function switchSection(activeNav, activeSection) {
         [navSetup, navDashboard, navTemplates, navIntegration].forEach(nav => nav.classList.remove('active'));
@@ -94,6 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
             logo_url: document.getElementById('logoUrl').value || null
         };
 
+        // Cache Locally
+        localStorage.setItem('mailbridge_creds', JSON.stringify(payload));
+
         const btnSave = document.getElementById('btnSaveConn');
         const ogText = btnSave.innerText;
         btnSave.innerText = 'Connecting...';
@@ -123,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadDomains() {
         try {
             const res = await fetch(`${API_URL}/email-settings`);
-            const data = await res.json();
+            let data = await res.json();
 
             const domainsList = document.getElementById('domainsList');
             const templateSelect = document.getElementById('templateDomainSelect');
@@ -132,6 +150,30 @@ document.addEventListener('DOMContentLoaded', () => {
             domainsList.innerHTML = '';
             templateSelect.innerHTML = '';
             if (integrationDomainSelect) integrationDomainSelect.innerHTML = '';
+
+            // Auto-restore mechanism for Vercel Ephemeral Storage workaround
+            if (data.length === 0) {
+                const savedCredsStr = localStorage.getItem('mailbridge_creds');
+                if (savedCredsStr) {
+                    try {
+                        const saved = JSON.parse(savedCredsStr);
+                        // Force a restoral of backend state
+                        await fetch(`${API_URL}/connect-email`, {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(saved)
+                        });
+                        const savedTemplatesStr = localStorage.getItem('mailbridge_templates_' + saved.domain);
+                        if (savedTemplatesStr) {
+                            await fetch(`${API_URL}/email-settings/${saved.domain}`, {
+                                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: savedTemplatesStr
+                            });
+                        }
+                        // Refetch after restore
+                        const reloadRes = await fetch(`${API_URL}/email-settings`);
+                        const reloadData = await reloadRes.json();
+                        if (reloadData.length > 0) data = reloadData;
+                    } catch (e) { console.error('Restore failed', e); }
+                }
+            }
 
             if (data.length === 0) {
                 domainsList.innerHTML = '<p>No domains connected yet.</p>';
@@ -281,31 +323,43 @@ document.addEventListener('DOMContentLoaded', () => {
   <p style="color: #9CA3AF; font-size: 14px; margin-top: 30px;">If you didn't request this, you can safely ignore this email.</p>
 </div>`;
         } else if (scheme === 'brand') {
-            verifyTemplateText.value = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; border: 1px solid #eaeaec;">
-  <div style="background-color: #fafbfc; padding: 20px; text-align: center; border-bottom: 1px solid #eaeaec;">
-    <img src="{{logo}}" alt="Logo" style="max-height: 50px;">
+            verifyTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
+  <img src="{{logo}}" alt="logo" style="max-height: 48px; margin-bottom: 20px;">
+  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+      <span style="font-size: 24px;">📧</span>
   </div>
-  <div style="padding: 40px 30px;">
-    <h2 style="color: #333; margin-top: 0;">Welcome aboard!</h2>
-    <p style="color: #555; font-size: 16px; line-height: 1.6;">Let's get your email address verified so you can start using our service.</p>
-    <div style="background-color: #f4f5f7; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
-        <p style="font-size: 14px; color: #6b778c; margin: 0 0 10px 0;">Your Verification Code</p>
-        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #172b4d;">{{code}}</span>
-    </div>
+  <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Verify your email</h1>
+  <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
+      Hello,<br><br>Welcome to xlinkly. To ensure the security of your account and activate all features, please verify your email address.
+  </p>
+  <div style="margin: 30px 0;">
+      <p style="color: #4B5563; font-size: 14px; font-weight: 500; text-align: left; margin-bottom: 10px;">Copy this security code to the verification page:</p>
+      <div style="background: #000000; padding: 25px; border-radius: 8px; border: 2px solid #000000; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #ffffff;">{{code}}</div>
   </div>
+  <p style="color: #6B7280; font-size: 14px; margin-bottom: 40px; text-align: left; line-height: 1.5;">
+      This secure code will expire in 60 minutes.<br>If you did not request this, you can safely ignore this email.
+  </p>
+  <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+  <p style="color: #9CA3AF; font-size: 12px; line-height: 1.5;">© 2024 xlinkly. Secure Infrastructure.<br>Tech District, Global Terminal.</p>
 </div>`;
-            resetTemplateText.value = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; border: 1px solid #eaeaec;">
-  <div style="background-color: #fafbfc; padding: 20px; text-align: center; border-bottom: 1px solid #eaeaec;">
-    <img src="{{logo}}" alt="Logo" style="max-height: 50px;">
+            resetTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
+  <img src="{{logo}}" alt="logo" style="max-height: 48px; margin-bottom: 20px;">
+  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+      <span style="font-size: 24px;">🔑</span>
   </div>
-  <div style="padding: 40px 30px;">
-    <h2 style="color: #333; margin-top: 0;">Password Reset</h2>
-    <p style="color: #555; font-size: 16px; line-height: 1.6;">Use the OTP code below to reset your password. This code will expire shortly.</p>
-    <div style="background-color: #f4f5f7; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
-        <p style="font-size: 14px; color: #6b778c; margin: 0 0 10px 0;">Your Reset Code</p>
-        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #172b4d;">{{code}}</span>
-    </div>
+  <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Password Reset</h1>
+  <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
+      Hello,<br><br>We received a request to reset the password for your xlinkly account. If this was you, please use the secure code below to set a new password.
+  </p>
+  <div style="margin: 30px 0;">
+      <p style="color: #4B5563; font-size: 14px; font-weight: 500; text-align: left; margin-bottom: 10px;">Copy this security code to the password reset page:</p>
+      <div style="background: #000000; padding: 25px; border-radius: 8px; border: 2px solid #000000; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #ffffff;">{{code}}</div>
   </div>
+  <p style="color: #6B7280; font-size: 14px; margin-bottom: 40px; text-align: left; line-height: 1.5;">
+      This secure code will expire in 60 minutes.<br>If you did not request this change, your account is still safe and you can ignore this email.
+  </p>
+  <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+  <p style="color: #9CA3AF; font-size: 12px; line-height: 1.5;">© 2024 xlinkly. Secure Infrastructure.<br>Tech District, Global Terminal.</p>
 </div>`;
         }
     });
@@ -315,13 +369,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!domain) return;
 
         try {
+            const templatePayload = {
+                verification_template: verifyTemplateText.value,
+                reset_template: resetTemplateText.value
+            };
+
+            // Cache locally so we can restore if serverless DB gets wiped
+            localStorage.setItem('mailbridge_templates_' + domain, JSON.stringify(templatePayload));
+
             const res = await fetch(`${API_URL}/email-settings/${domain}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    verification_template: verifyTemplateText.value,
-                    reset_template: resetTemplateText.value
-                })
+                body: JSON.stringify(templatePayload)
             });
 
             if (!res.ok) throw new Error('Failed to update templates');
