@@ -324,17 +324,17 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>`;
         } else if (scheme === 'brand') {
             verifyTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
-  <img src="{{logo}}" alt="logo" style="max-height: 48px; margin-bottom: 20px;">
-  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-      <span style="font-size: 24px;">📧</span>
+  <h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>
+  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+      <span style="font-size: 28px; color: #ffffff;">📧</span>
   </div>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Verify your email</h1>
   <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
-      Hello,<br><br>Welcome to xlinkly. To ensure the security of your account and activate all features, please verify your email address.
+      Hello,<br><br>Welcome to <strong>xlinkly</strong>. To ensure the security of your account and activate all features, please verify your email address.
   </p>
   <div style="margin: 30px 0;">
       <p style="color: #4B5563; font-size: 14px; font-weight: 500; text-align: left; margin-bottom: 10px;">Copy this security code to the verification page:</p>
-      <div style="background: #000000; padding: 25px; border-radius: 8px; border: 2px solid #000000; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #ffffff;">{{code}}</div>
+      <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; border: 2px solid #000000; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #000000;">{{code}}</div>
   </div>
   <p style="color: #6B7280; font-size: 14px; margin-bottom: 40px; text-align: left; line-height: 1.5;">
       This secure code will expire in 60 minutes.<br>If you did not request this, you can safely ignore this email.
@@ -343,17 +343,17 @@ document.addEventListener('DOMContentLoaded', () => {
   <p style="color: #9CA3AF; font-size: 12px; line-height: 1.5;">© 2024 xlinkly. Secure Infrastructure.<br>Tech District, Global Terminal.</p>
 </div>`;
             resetTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
-  <img src="{{logo}}" alt="logo" style="max-height: 48px; margin-bottom: 20px;">
-  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-      <span style="font-size: 24px;">🔑</span>
+  <h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>
+  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+      <span style="font-size: 28px; color: #ffffff;">🔑</span>
   </div>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Password Reset</h1>
   <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
-      Hello,<br><br>We received a request to reset the password for your xlinkly account. If this was you, please use the secure code below to set a new password.
+      Hello,<br><br>We received a request to reset the password for your <strong>xlinkly</strong> account. If this was you, please use the secure code below to set a new password.
   </p>
   <div style="margin: 30px 0;">
       <p style="color: #4B5563; font-size: 14px; font-weight: 500; text-align: left; margin-bottom: 10px;">Copy this security code to the password reset page:</p>
-      <div style="background: #000000; padding: 25px; border-radius: 8px; border: 2px solid #000000; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #ffffff;">{{code}}</div>
+      <div style="background: #f3f4f6; padding: 25px; border-radius: 8px; border: 2px solid #000000; font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #000000;">{{code}}</div>
   </div>
   <p style="color: #6B7280; font-size: 14px; margin-bottom: 40px; text-align: left; line-height: 1.5;">
       This secure code will expire in 60 minutes.<br>If you did not request this change, your account is still safe and you can ignore this email.
