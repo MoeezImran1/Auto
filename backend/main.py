@@ -240,7 +240,6 @@ def verify_code(req: schemas.VerifyCodeRequest, db: Session = Depends(get_db)):
     db_token = db.query(models.EmailToken).filter(
         models.EmailToken.email == req.email,
         models.EmailToken.token == hashed_token,
-        models.EmailToken.token_type == req.type,
         models.EmailToken.used == False
     ).first()
 
