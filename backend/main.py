@@ -130,11 +130,13 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
     
     # Securely hash the OTP code to store as the token
     hashed_token = security.hash_token(otp_code)
-    # Registration/Verification expiry set to 10 minutes (Improved for slower email deliveries)
-    expiry = datetime.utcnow() + timedelta(minutes=10)
+    # Registration/Verification expiry set to 15 minutes (Improved for robustness)
+    expiry = datetime.utcnow() + timedelta(minutes=15)
+    
+    clean_email = req.email.strip().lower()
 
     db_token = models.EmailToken(
-        email=req.email,
+        email=clean_email,
         token=hashed_token,
         token_type="verify",
         expiry_time=expiry
@@ -177,11 +179,13 @@ def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks
     # Generate only a 6-digit OTP code for reset
     otp_code = security.generate_otp()
     hashed_token = security.hash_token(otp_code)
-    # Password reset expiry set to 15 minutes (Improved for UX)
-    expiry = datetime.utcnow() + timedelta(minutes=15)
+    # Password reset expiry set to 20 minutes
+    expiry = datetime.utcnow() + timedelta(minutes=20)
+
+    clean_email = req.email.strip().lower()
 
     db_token = models.EmailToken(
-        email=req.email,
+        email=clean_email,
         token=hashed_token,
         token_type="reset",
         expiry_time=expiry
@@ -236,18 +240,24 @@ def verify_token(email: str, token: str, type: str, db: Session = Depends(get_db
 
 @app.post("/verify-code")
 def verify_code(req: schemas.VerifyCodeRequest, db: Session = Depends(get_db)):
-    hashed_token = security.hash_token(req.code)
+    clean_code = req.code.strip()
+    clean_email = req.email.strip().lower()
+    hashed_token = security.hash_token(clean_code)
+    
+    # First, check if the code exists at all for this email
     db_token = db.query(models.EmailToken).filter(
-        models.EmailToken.email == req.email,
-        models.EmailToken.token == hashed_token,
-        models.EmailToken.used == False
+        models.EmailToken.email == clean_email,
+        models.EmailToken.token == hashed_token
     ).first()
 
     if not db_token:
-        raise HTTPException(status_code=400, detail="Invalid or expired verification code")
+        raise HTTPException(status_code=400, detail="Invalid verification code. Please check your email and try again.")
+    
+    if db_token.used:
+        raise HTTPException(status_code=400, detail="This code has already been used. Please request a new one.")
 
     if datetime.utcnow() > db_token.expiry_time:
-        raise HTTPException(status_code=400, detail="Verification code expired")
+        raise HTTPException(status_code=400, detail="Verification code expired. Codes are valid for 15-20 minutes.")
 
     # Mark as used
     db_token.used = True
