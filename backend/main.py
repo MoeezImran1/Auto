@@ -125,21 +125,13 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
     if not setting:
         raise HTTPException(status_code=404, detail=f"Domain '{req.domain}' not connected. Please setup SMTP for this domain first in MailBridge.")
 
-    # Invalidate any previously generated verification token to prevent race conditions
-    db.query(models.EmailToken).filter(
-        models.EmailToken.email == req.email,
-        models.EmailToken.token_type == "verify",
-        models.EmailToken.used == False
-    ).update({"used": True})
-    db.commit()
-
     # Generate only a 6-digit OTP code
     otp_code = security.generate_otp()
     
     # Securely hash the OTP code to store as the token
     hashed_token = security.hash_token(otp_code)
-    # Registration/Verification expiry set to 5 minutes
-    expiry = datetime.utcnow() + timedelta(minutes=5)
+    # Registration/Verification expiry set to 10 minutes (Improved for slower email deliveries)
+    expiry = datetime.utcnow() + timedelta(minutes=10)
 
     db_token = models.EmailToken(
         email=req.email,
@@ -182,19 +174,11 @@ def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks
     if not setting:
         raise HTTPException(status_code=404, detail=f"Domain '{req.domain}' not connected. Please setup SMTP for this domain first in MailBridge.")
 
-    # Invalidate any previously generated reset token to prevent race conditions
-    db.query(models.EmailToken).filter(
-        models.EmailToken.email == req.email,
-        models.EmailToken.token_type == "reset",
-        models.EmailToken.used == False
-    ).update({"used": True})
-    db.commit()
-
     # Generate only a 6-digit OTP code for reset
     otp_code = security.generate_otp()
     hashed_token = security.hash_token(otp_code)
-    # Password reset expiry set to 10 minutes (standard)
-    expiry = datetime.utcnow() + timedelta(minutes=10)
+    # Password reset expiry set to 15 minutes (Improved for UX)
+    expiry = datetime.utcnow() + timedelta(minutes=15)
 
     db_token = models.EmailToken(
         email=req.email,
