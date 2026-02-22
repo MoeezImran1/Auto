@@ -305,8 +305,9 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>`;
         } else if (scheme === 'saas') {
             verifyTemplateText.value = `<div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
-  <div style="width: 60px; height: 60px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-    <span style="font-size: 24px;">📧</span>
+  {% if logo %}<img src="{{logo}}" alt="logo" style="max-height: 48px; margin-bottom: 20px;">{% endif %}
+  <div style="width: 60px; height: 60px; background: #E0E7FF; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+    <span style="font-size: 24px; color: #3730A3; font-family: sans-serif;">&#x2709;</span>
   </div>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 15px;">You're almost there!</h1>
   <p style="color: #6B7280; font-size: 16px; margin-bottom: 20px; line-height: 1.5;">Enter the verification code below to confirm your email address and activate your account.</p>
@@ -315,6 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>`;
             resetTemplateText.value = `<div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
+  {% if logo %}<img src="{{logo}}" alt="logo" style="max-height: 48px; margin-bottom: 20px;">{% endif %}
+  <div style="width: 60px; height: 60px; background: #E0E7FF; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+    <span style="font-size: 24px; color: #3730A3; font-family: sans-serif;">&#x1F512;</span>
+  </div>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 15px;">Reset your password</h1>
   <p style="color: #6B7280; font-size: 16px; margin-bottom: 30px; line-height: 1.5;">We received a request to reset your password. Enter the OTP code below to choose a new one.</p>
   <div style="margin-bottom: 30px;">
@@ -324,9 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>`;
         } else if (scheme === 'brand') {
             verifyTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
-  <h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>
+  {% if logo %}<img src="{{logo}}" alt="xlinkly logo" style="max-height: 48px; margin-bottom: 20px;">{% else %}<h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>{% endif %}
   <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-      <span style="font-size: 28px; color: #ffffff;">📧</span>
+      <span style="font-size: 28px; color: #ffffff; font-family: sans-serif;">&#x2709;</span>
   </div>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Verify your email</h1>
   <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
@@ -343,9 +348,9 @@ document.addEventListener('DOMContentLoaded', () => {
   <p style="color: #9CA3AF; font-size: 12px; line-height: 1.5;">© 2024 xlinkly. Secure Infrastructure.<br>Tech District, Global Terminal.</p>
 </div>`;
             resetTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
-  <h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>
+  {% if logo %}<img src="{{logo}}" alt="xlinkly logo" style="max-height: 48px; margin-bottom: 20px;">{% else %}<h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>{% endif %}
   <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-      <span style="font-size: 28px; color: #ffffff;">🔑</span>
+      <span style="font-size: 28px; color: #ffffff; font-family: sans-serif;">&#x1F512;</span>
   </div>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Password Reset</h1>
   <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
