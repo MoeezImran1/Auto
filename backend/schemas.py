@@ -27,7 +27,7 @@ class EmailSettingsResponse(BaseModel):
     reset_template: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TestEmailRequest(BaseModel):
     domain: str
@@ -55,4 +55,4 @@ class EmailLogResponse(BaseModel):
     date: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

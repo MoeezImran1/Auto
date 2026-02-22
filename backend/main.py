@@ -33,6 +33,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal Server Error: {str(exc)}"},
+    )
+
+from fastapi.responses import JSONResponse
+
 # Optional: Serve static files for frontend
 # app.mount("/static", StaticFiles(directory="../frontend"), name="static")
 
