@@ -156,7 +156,7 @@ def send_verification(req: schemas.SendVerificationRequest, request: Request, ba
         password=pwd,
         sender_name=setting.sender_name,
         to_email=req.email,
-        subject="Verify Your Email (OTP code)",
+        subject=f"Verify Your Email - {otp_code}",
         html_body=body
     )
     log_email_action(db, req.email, "Verification OTP", "Success" if success else "Failed")
@@ -200,7 +200,7 @@ def send_reset(req: schemas.SendResetRequest, request: Request, background_tasks
         password=pwd,
         sender_name=setting.sender_name,
         to_email=req.email,
-        subject="Reset Your Password (OTP code)",
+        subject=f"Reset Your Password - {otp_code}",
         html_body=body
     )
     log_email_action(db, req.email, "Reset OTP", "Success" if success else "Failed")
