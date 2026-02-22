@@ -12,6 +12,11 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
     DATABASE_URL = DATABASE_URL.strip().strip('"').strip("'")
+    
+    # Fix accidental double protocol like postgresql://postgresql://
+    if DATABASE_URL.startswith("postgresql://postgresql://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://postgresql://", "postgresql://", 1)
+    
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
     
