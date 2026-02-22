@@ -9,6 +9,10 @@ load_dotenv() # Load variables from .env file
 # 1. Use DATABASE_URL from environment if available (for Vercel/Production with Postgres/MySQL)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+if not DATABASE_URL:
+    # Use standard default Supabase link to avoid ephemeral SQLite storage issues on Vercel
+    DATABASE_URL = "postgresql://postgres.eabvssjaddtfjvtprgoa:emaildb.com12@aws-0-eu-central-1.pooler.supabase.com:6543/postgres"
+
 if DATABASE_URL:
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
