@@ -17,7 +17,10 @@ import security
 import email_service
 
 # Create tables
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"Database table creation skipped/failed: {e}")
 
 app = FastAPI(title="Email Auth Service")
 
