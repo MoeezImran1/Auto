@@ -329,10 +329,17 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>`;
         } else if (scheme === 'brand') {
             verifyTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
-  {% if logo %}<img src="{{logo}}" alt="xlinkly logo" style="max-height: 48px; margin-bottom: 20px;">{% else %}<h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>{% endif %}
-  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-      <span style="font-size: 28px; color: #ffffff; font-family: sans-serif;">&#x2709;</span>
+  <div style="font-size: 28px; font-weight: 800; color: #09090b; letter-spacing: -1px; text-align: center; margin-bottom: 30px;">
+      {% if logo %}<img src="{{logo}}" width="24" height="24" alt="xlinkly logo" style="vertical-align: middle; margin-right: 6px; margin-bottom: 4px;" />{% else %}<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2309090b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E" width="24" height="24" alt="xlinkly logo" style="vertical-align: middle; margin-right: 6px; margin-bottom: 4px;" />{% endif %}
+      <span style="vertical-align: middle;">xlinkly</span>
   </div>
+  <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+      <tr>
+          <td align="center" valign="middle" width="72" height="72" style="background: #fafafa; border-radius: 20px; border: 1px solid #e4e4e7; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+              <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="32" height="32" alt="Email icon" style="display: block; margin: 0 auto; filter: grayscale(100%); opacity: 0.8;" />
+          </td>
+      </tr>
+  </table>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Verify your email</h1>
   <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
       Hello,<br><br>Welcome to <strong>xlinkly</strong>. To ensure the security of your account and activate all features, please verify your email address.
@@ -348,10 +355,17 @@ document.addEventListener('DOMContentLoaded', () => {
   <p style="color: #9CA3AF; font-size: 12px; line-height: 1.5;">© 2024 xlinkly. Secure Infrastructure.<br>Tech District, Global Terminal.</p>
 </div>`;
             resetTemplateText.value = `<div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #e5e7eb;">
-  {% if logo %}<img src="{{logo}}" alt="xlinkly logo" style="max-height: 48px; margin-bottom: 20px;">{% else %}<h2 style="margin-bottom: 20px; font-size: 28px; color: #111827;">xlinkly</h2>{% endif %}
-  <div style="width: 64px; height: 64px; background: #000000; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-      <span style="font-size: 28px; color: #ffffff; font-family: sans-serif;">&#x1F512;</span>
+  <div style="font-size: 28px; font-weight: 800; color: #09090b; letter-spacing: -1px; text-align: center; margin-bottom: 30px;">
+      {% if logo %}<img src="{{logo}}" width="24" height="24" alt="xlinkly logo" style="vertical-align: middle; margin-right: 6px; margin-bottom: 4px;" />{% else %}<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2309090b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E" width="24" height="24" alt="xlinkly logo" style="vertical-align: middle; margin-right: 6px; margin-bottom: 4px;" />{% endif %}
+      <span style="vertical-align: middle;">xlinkly</span>
   </div>
+  <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 24px;">
+      <tr>
+          <td align="center" valign="middle" width="72" height="72" style="background: #fafafa; border-radius: 20px; border: 1px solid #e4e4e7; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%2309090b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3Ccircle cx='12' cy='16' r='1'/%3E%3C/svg%3E" width="32" height="32" alt="Password icon" style="display: block; margin: 0 auto;" />
+          </td>
+      </tr>
+  </table>
   <h1 style="color: #111827; font-size: 24px; margin-bottom: 5px;">Password Reset</h1>
   <p style="color: #6B7280; font-size: 16px; margin-top: 20px; text-align: left; line-height: 1.5;">
       Hello,<br><br>We received a request to reset the password for your <strong>xlinkly</strong> account. If this was you, please use the secure code below to set a new password.
