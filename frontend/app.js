@@ -124,8 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(payload)
             });
 
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.detail || 'Connection Failed');
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || 'Connection Failed');
+            } else {
+                const text = await res.text();
+                throw new Error('Server Exception: ' + (text.substring(0, 50) || 'Unknown Error'));
+            }
 
             showToast('SMTP Connection Successful & Saved!', 'success');
             setupForm.reset();
